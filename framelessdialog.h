@@ -31,11 +31,13 @@ private:
     QToolButton *m_maximizeBtn = Q_NULLPTR;
     QSizeGrip *m_sizeGrip = Q_NULLPTR;
 
+    QGridLayout *m_mainGridLayout = Q_NULLPTR;
+    QFrame *m_mainFrame = Q_NULLPTR;
+    QGridLayout *m_frameGridLayout = Q_NULLPTR;
     QFrame *m_topBarFrame = Q_NULLPTR;
 
-    QGridLayout *m_frameGridLayout = Q_NULLPTR;
-
 protected:
+    bool event(QEvent *event);
     void mousePressEvent(QMouseEvent *event);
     void mouseReleaseEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent *event);

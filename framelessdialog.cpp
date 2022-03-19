@@ -13,33 +13,34 @@ FramelessDialog::FramelessDialog(QWidget *parent) : QDialog(parent)
     setAttribute(Qt::WA_TranslucentBackground);
     resize(400, 400);
 
-    QGridLayout *mainGridLayout = new QGridLayout;
-    mainGridLayout->setSpacing(0);
-    mainGridLayout->setMargin(3);
-    setLayout(mainGridLayout);
+    m_mainGridLayout = new QGridLayout;
+    m_mainGridLayout->setObjectName("mainGridLayout");
+    m_mainGridLayout->setSpacing(0);
+    setLayout(m_mainGridLayout);
 
-    QFrame *mainFrame = new QFrame;
-    mainFrame->setObjectName("mainFrame");
-    mainGridLayout->addWidget(mainFrame);
+    m_mainFrame = new QFrame;
+    m_mainFrame->setObjectName("mainFrame");
+    m_mainGridLayout->addWidget(m_mainFrame);
 
-    QVBoxLayout *vLayout = new QVBoxLayout;
-    vLayout->setSpacing(0);
-    vLayout->setMargin(0);
-    mainFrame->setLayout(vLayout);
-
-    mainFrame->setStyleSheet(R"(
+    m_mainGridLayout->setMargin(3);
+    m_mainFrame->setStyleSheet(QString(R"(
                              #mainFrame{
                              background-color: white;
                              border: 2px solid rgb(230, 230, 230);
                              border-radius: 8px;
                              }
-                             )");
+                             )"));
+
+    QVBoxLayout *vLayout = new QVBoxLayout;
+    vLayout->setSpacing(0);
+    vLayout->setMargin(0);
+    m_mainFrame->setLayout(vLayout);
 
     QGraphicsDropShadowEffect *shadow = new QGraphicsDropShadowEffect;
     shadow->setOffset(3);
     shadow->setColor(QColor(63, 63, 63, 100));
     shadow->setBlurRadius(2);
-    mainFrame->setGraphicsEffect(shadow);
+    m_mainFrame->setGraphicsEffect(shadow);
 
     //Top bar
     m_topBarFrame = new QFrame;
@@ -55,15 +56,12 @@ FramelessDialog::FramelessDialog(QWidget *parent) : QDialog(parent)
     m_topBarFrame->setLayout(topBarLayout);
 
     m_topBarFrame->setStyleSheet(R"(
-                               #topBarFrame{
+                                 #topBarFrame{
+                                 background-color: rgb(240, 240, 240);
                                  border-top-left-radius: 8px;
                                  border-top-right-radius: 8px;
-                               }
-                              #topBarFrame:hover{
-                                background-color: rgb(240, 240, 240);
-                              }
-                              )");
-
+                                 }
+                                 )");
 
     QToolButton *closeBtn = new QToolButton;
     closeBtn->setMinimumSize(24, 24);
@@ -125,41 +123,10 @@ FramelessDialog::FramelessDialog(QWidget *parent) : QDialog(parent)
 
     connect(m_maximizeBtn, &QToolButton::clicked, [=]()
     {
-        int margin = 3;
-        int borderRadius = 8;
-
-        if(this->windowState() == Qt::WindowMaximized)
-        {
+        if(this->isMaximized())
             this->showNormal();
-            m_maximizeBtn->setToolTip(tr("Maximize"));
-            m_maximizeBtn->setIcon(QIcon("://FramelessDialogResources/restore-icon.png"));
-            m_sizeGrip->show();
-
-            if(m_isMovable)
-                m_topBarFrame->setCursor(Qt::SizeAllCursor);
-        }
         else
-        {
             this->showMaximized();
-            m_maximizeBtn->setToolTip(tr("Restore"));
-            m_maximizeBtn->setIcon(QIcon("://FramelessDialogResources/minimize-icon.png"));
-            m_sizeGrip->hide();
-
-            if(m_isMovable)
-                m_topBarFrame->setCursor(Qt::ArrowCursor);
-
-            margin = 0;
-            borderRadius = 0;
-        }
-
-        mainGridLayout->setMargin(margin);
-        mainFrame->setStyleSheet(QString(R"(
-                                 #mainFrame{
-                                 background-color: white;
-                                 border: 2px solid transparent;
-                                 border-radius: %0px;
-                                 }
-                                 )").arg(borderRadius));
     });
 }
 
@@ -191,7 +158,7 @@ void FramelessDialog::mousePressEvent(QMouseEvent *event)
     if(!m_isMovable)
         return;
 
-    if(this->windowState() == Qt::WindowMaximized)
+    if(this->isMaximized())
         return;
 
     if(event->button() == Qt::LeftButton)
@@ -236,4 +203,34 @@ void FramelessDialog::mouseDoubleClickEvent(QMouseEvent *event)
             m_maximizeBtn->click();
         }
     }
+}
+
+bool FramelessDialog::event(QEvent *event)
+{
+    if(event->type() == QEvent::WindowStateChange)
+    {
+//        QWindowStateChangeEvent *windowStateChangeEvent = static_cast<QWindowStateChangeEvent*>(event);
+//        if(windowStateChangeEvent)
+//        {
+            m_maximizeBtn->setToolTip(tr(isMaximized() ? "Restore" : "Maximize"));
+            m_maximizeBtn->setIcon(QIcon(isMaximized() ? "://FramelessDialogResources/minimize-icon.png" : "://FramelessDialogResources/restore-icon.png"));
+            m_sizeGrip->setVisible(!isMaximized());
+
+            if(m_isMovable)
+                m_topBarFrame->setCursor(isMaximized() ? Qt::ArrowCursor : Qt::SizeAllCursor);
+
+            m_mainGridLayout->setMargin(isMaximized() ? 0 : 3);
+            m_mainFrame->setStyleSheet(QString(R"(
+                                               #mainFrame{
+                                               background-color: white;
+                                               border: 2px solid rgb(230, 230, 230);
+                                               border-radius: %0px;
+                                               }
+                                               )").arg(isMaximized() ? 0 : 8));
+
+            return true;
+//        }
+    }
+
+    return QDialog::event(event);
 }
