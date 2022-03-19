@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/">
+        <file>FramelessDialogResources/close-window-icon.png</file>
+        <file>FramelessDialogResources/minimize-icon.png</file>
+        <file>FramelessDialogResources/restore-icon.png</file>
+        <file>FramelessDialogResources/resize-icon.png</file>
+    </qresource>
+</RCC>
