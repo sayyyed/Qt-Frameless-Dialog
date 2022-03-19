@@ -30,7 +30,7 @@ FramelessDialog::FramelessDialog(QWidget *parent) : QDialog(parent)
     mainFrame->setStyleSheet(R"(
                              #mainFrame{
                              background-color: white;
-                             border: 2px solid lightgray;
+                             border: 2px solid rgb(230, 230, 230);
                              border-radius: 8px;
                              }
                              )");
@@ -168,6 +168,11 @@ void FramelessDialog::addWidget(QWidget *widget, int row, int column, int rowSpa
     m_frameGridLayout->addWidget(widget, row, column, rowSpan, columnSpan, alignment);
 }
 
+void FramelessDialog::addLayout(QLayout *layout, int row, int column, int rowSpan, int columnSpan, Qt::Alignment alignment)
+{
+    m_frameGridLayout->addLayout(layout, row, column, rowSpan, columnSpan, alignment);
+}
+
 void FramelessDialog::setIsMovable(bool isMovable)
 {
     m_isMovable = isMovable;
@@ -178,6 +183,7 @@ void FramelessDialog::setIsResizable(bool isResizable)
 {
     m_isResizable = isResizable;
     m_sizeGrip->setVisible(isResizable);
+    m_maximizeBtn->setVisible(isResizable);
 }
 
 void FramelessDialog::mousePressEvent(QMouseEvent *event)

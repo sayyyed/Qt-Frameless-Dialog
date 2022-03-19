@@ -13,7 +13,10 @@ public:
     FramelessDialog(QWidget *parent = Q_NULLPTR);
 
     void addWidget(QWidget *widget, int row, int column,
-                   int rowSpan, int columnSpan, Qt::Alignment alignment = Qt::Alignment());
+                   int rowSpan = 1, int columnSpan = 1, Qt::Alignment alignment = Qt::Alignment());
+    void addLayout(QLayout *layout, int row, int column,
+                   int rowSpan = 1, int columnSpan = 1, Qt::Alignment alignment = Qt::Alignment());
+
     void setIsMovable(bool isMovable);
 
     void setIsResizable(bool isResizable);
