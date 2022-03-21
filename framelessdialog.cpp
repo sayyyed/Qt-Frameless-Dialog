@@ -113,10 +113,11 @@ FramelessDialog::FramelessDialog(QWidget *parent) : QDialog(parent)
     vLayout->addLayout(m_frameGridLayout, 1);
 
     m_sizeGrip = new QSizeGrip(this);
+    m_sizeGrip->setToolTip(tr("Resize"));
     m_sizeGrip->setStyleSheet(R"(
-                            image: url(:/FramelessDialogResources/resize-icon.png);
-                            width: 24px;
-                            height: 24px;
+                            image: url(:/FramelessDialogResources/Resize-black-icon.png);
+                            width: 16px;
+                            height: 16px;
                             )");
     vLayout->addWidget(m_sizeGrip, 0, Qt::AlignBottom | Qt::AlignLeft);
     m_sizeGrip->setVisible(m_isResizable);

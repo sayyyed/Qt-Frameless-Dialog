@@ -4,5 +4,6 @@
         <file>FramelessDialogResources/minimize-icon.png</file>
         <file>FramelessDialogResources/restore-icon.png</file>
         <file>FramelessDialogResources/resize-icon.png</file>
+        <file>FramelessDialogResources/Resize-black-icon.png</file>
     </qresource>
 </RCC>
