@@ -11,7 +11,7 @@ FramelessDialog::FramelessDialog(QWidget *parent) : QDialog(parent)
 {
     setWindowFlags(Qt::FramelessWindowHint);
     setAttribute(Qt::WA_TranslucentBackground);
-    resize(400, 400);
+    resize(800, 600);
 
     m_mainGridLayout = new QGridLayout;
     m_mainGridLayout->setObjectName("mainGridLayout");
@@ -24,12 +24,12 @@ FramelessDialog::FramelessDialog(QWidget *parent) : QDialog(parent)
 
     m_mainGridLayout->setMargin(3);
     m_mainFrame->setStyleSheet(QString(R"(
-                             #mainFrame{
-                             background-color: white;
-                             border: 2px solid rgb(230, 230, 230);
-                             border-radius: 8px;
-                             }
-                             )"));
+                                       #mainFrame{
+                                       background-color: white;
+                                       border: 2px solid rgb(230, 230, 230);
+                                       border-radius: 8px;
+                                       }
+                                       )"));
 
     QVBoxLayout *vLayout = new QVBoxLayout;
     vLayout->setSpacing(0);
@@ -76,7 +76,7 @@ FramelessDialog::FramelessDialog(QWidget *parent) : QDialog(parent)
 
     m_maximizeBtn = new QToolButton;
     m_maximizeBtn->setMinimumSize(24, 24);
-    m_maximizeBtn->setIcon(QIcon("://FramelessDialogResources/restore-icon.png"));
+    m_maximizeBtn->setIcon(QIcon("://FramelessDialogResources/window-icon.png"));
     m_maximizeBtn->setIconSize(QSize(24, 24));
     m_maximizeBtn->setToolButtonStyle(Qt::ToolButtonIconOnly);
     m_maximizeBtn->setAutoRaise(true);
@@ -214,7 +214,7 @@ bool FramelessDialog::event(QEvent *event)
 //        if(windowStateChangeEvent)
 //        {
             m_maximizeBtn->setToolTip(tr(isMaximized() ? "Restore" : "Maximize"));
-            m_maximizeBtn->setIcon(QIcon(isMaximized() ? "://FramelessDialogResources/minimize-icon.png" : "://FramelessDialogResources/restore-icon.png"));
+            m_maximizeBtn->setIcon(QIcon(isMaximized() ? "://FramelessDialogResources/restore-icon.png" : "://FramelessDialogResources/window-icon.png"));
             m_sizeGrip->setVisible(!isMaximized());
 
             if(m_isMovable)
