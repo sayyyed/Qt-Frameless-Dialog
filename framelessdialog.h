@@ -36,6 +36,14 @@ private:
     QGridLayout *m_frameGridLayout = Q_NULLPTR;
     QFrame *m_topBarFrame = Q_NULLPTR;
 
+    //
+    QFrame *m_leftHorizontalSizeGrip = nullptr;
+    bool m_isLeftHorizontalSizeGripClicked = false;
+    QFrame *m_rightHorizontalSizeGrip = nullptr;
+    bool m_isRightHorizontalSizeGripClicked = false;
+    bool m_isHorizontalResizing = false;
+    int m_originalWidth = 0;
+
 protected:
     bool event(QEvent *event);
     void mousePressEvent(QMouseEvent *event);

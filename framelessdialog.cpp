@@ -18,9 +18,29 @@ FramelessDialog::FramelessDialog(QWidget *parent) : QDialog(parent)
     m_mainGridLayout->setSpacing(0);
     setLayout(m_mainGridLayout);
 
+    int mainFrameColumn = 0;
+
+    //Horizontal Size Grips
+    if(m_isResizable)
+    {
+        mainFrameColumn = 1;
+
+        m_leftHorizontalSizeGrip = new QFrame(this);
+        m_mainGridLayout->addWidget(m_leftHorizontalSizeGrip, 0, 0);
+        m_leftHorizontalSizeGrip->setMinimumWidth(3);
+        m_leftHorizontalSizeGrip->setMaximumWidth(3);
+        m_leftHorizontalSizeGrip->setCursor(Qt::SizeHorCursor);
+
+        m_rightHorizontalSizeGrip = new QFrame(this);
+        m_mainGridLayout->addWidget(m_rightHorizontalSizeGrip, 0, 2);
+        m_rightHorizontalSizeGrip->setMinimumWidth(3);
+        m_rightHorizontalSizeGrip->setMaximumWidth(3);
+        m_rightHorizontalSizeGrip->setCursor(Qt::SizeHorCursor);
+    }
+
     m_mainFrame = new QFrame;
     m_mainFrame->setObjectName("mainFrame");
-    m_mainGridLayout->addWidget(m_mainFrame);
+    m_mainGridLayout->addWidget(m_mainFrame, 0, mainFrameColumn);
 
     m_mainGridLayout->setMargin(9);
     m_mainGridLayout->setSpacing(0);
@@ -151,46 +171,116 @@ void FramelessDialog::setIsMovable(bool isMovable)
 void FramelessDialog::setIsResizable(bool isResizable)
 {
     m_isResizable = isResizable;
-    m_sizeGrip->setVisible(isResizable);
-    m_maximizeBtn->setVisible(isResizable);
+
+    m_sizeGrip->setVisible(m_isResizable);
+    m_maximizeBtn->setVisible(m_isResizable);
+    m_leftHorizontalSizeGrip->setVisible(m_isResizable);
+    m_rightHorizontalSizeGrip->setVisible(m_isResizable);
 }
 
 void FramelessDialog::mousePressEvent(QMouseEvent *event)
 {
-    if(!m_isMovable)
-        return;
-
-    if(this->isMaximized())
-        return;
-
-    if(event->button() == Qt::LeftButton)
+    if(m_isMovable)
     {
-        m_originalPosition = this->mapToGlobal(QPoint(0, 0));
-//        QRect topBarRect(m_originalPosition.x(), m_originalPosition.y(), this->width(), m_topBarFrame->height());
-//        if(topBarRect.contains(event->globalPos()))
-//        {
-            setCursor(Qt::SizeAllCursor);
-            m_mouseDownPoint = event->globalPos();
-            m_isMouseDown = true;
-            setWindowOpacity(0.85);
-//        }
+        if(this->isMaximized())
+            return;
+
+        if(event->button() == Qt::LeftButton)
+        {
+            m_originalPosition = this->mapToGlobal(QPoint(0, 0));
+            QRect topBarRect(m_originalPosition.x(), m_originalPosition.y(), this->width(), m_topBarFrame->height());
+            if(topBarRect.contains(event->globalPos()))
+            {
+                setCursor(Qt::SizeAllCursor);
+                m_mouseDownPoint = event->globalPos();
+                m_isMouseDown = true;
+                setWindowOpacity(0.85);
+                return;
+            }
+        }
+    }
+
+    if(m_isResizable)
+    {
+        if(event->button() == Qt::LeftButton)
+        {
+            m_originalWidth = this->width();
+
+            QPoint p = m_leftHorizontalSizeGrip->mapToGlobal(QPoint(0, 0));
+            QRect leftHorizontalSizeGripRect(p.x(), p.y(), m_leftHorizontalSizeGrip->width(), this->height());
+            if(leftHorizontalSizeGripRect.contains(event->globalPos()))
+            {
+                m_originalPosition = this->mapToGlobal(QPoint(0, 0));
+                m_mouseDownPoint = event->globalPos();
+                m_isHorizontalResizing = true;
+                m_isLeftHorizontalSizeGripClicked = true;
+                setWindowOpacity(0.85);
+                return;
+            }
+
+            p = m_rightHorizontalSizeGrip->mapToGlobal(QPoint(0, 0));
+            QRect rightHorizontalSizeGripRect(p.x(), p.y(), m_rightHorizontalSizeGrip->width(), this->height());
+            if(rightHorizontalSizeGripRect.contains(event->globalPos()))
+            {
+                m_originalPosition = this->mapToGlobal(QPoint(0, 0));
+                m_mouseDownPoint = event->globalPos();
+                m_isHorizontalResizing = true;
+                m_isRightHorizontalSizeGripClicked = true;
+                setWindowOpacity(0.85);
+            }
+        }
     }
 }
 
 void FramelessDialog::mouseReleaseEvent(QMouseEvent *)
 {
-    if(!m_isMovable)
-        return;
+    if(m_isMovable)
+    {
+        m_isMouseDown = false;
+        setCursor(Qt::ArrowCursor);
+    }
 
-    m_isMouseDown = false;
-    setCursor(Qt::ArrowCursor);
-    setWindowOpacity(1);
+    if(m_isResizable)
+    {
+        if(m_isHorizontalResizing == true)
+        {
+            m_isHorizontalResizing = false;
+            m_isLeftHorizontalSizeGripClicked = false;
+            m_isRightHorizontalSizeGripClicked = false;
+        }
+    }
+
+    if(this->windowOpacity() < 1)
+        setWindowOpacity(1);
 }
 
 void FramelessDialog::mouseMoveEvent(QMouseEvent *event)
 {
     if(m_isMovable && m_isMouseDown)
+    {
         move(m_originalPosition + (event->globalPos() - m_mouseDownPoint));
+        return;
+    }
+
+    if(m_isResizable)
+    {
+        if(m_isHorizontalResizing)
+        {
+            if(m_isLeftHorizontalSizeGripClicked)
+            {
+                resize(m_originalWidth+(event->globalPos().x() - m_mouseDownPoint.x()), this->height());
+            }
+            else if(m_isRightHorizontalSizeGripClicked)
+            {
+                int distance = event->globalPos().x() - m_mouseDownPoint.x();
+                resize(m_originalWidth+(-distance), this->height());
+                if(this->width() <= this->minimumWidth())
+                    return;
+
+                move(m_originalPosition.x() + distance, m_originalPosition.y());
+            }
+        }
+    }
 }
 
 void FramelessDialog::mouseDoubleClickEvent(QMouseEvent *event)
@@ -231,6 +321,12 @@ bool FramelessDialog::event(QEvent *event)
                                                border-radius: %0px;
                                                }
                                                )").arg(isMaximized() ? 0 : 8));
+
+            if(m_isResizable)
+            {
+                m_leftHorizontalSizeGrip->setVisible(!isMaximized());
+                m_rightHorizontalSizeGrip->setVisible(!isMaximized());
+            }
 
             return true;
 //        }
