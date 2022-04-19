@@ -22,11 +22,12 @@ FramelessDialog::FramelessDialog(QWidget *parent) : QDialog(parent)
     m_mainFrame->setObjectName("mainFrame");
     m_mainGridLayout->addWidget(m_mainFrame);
 
-    m_mainGridLayout->setMargin(3);
+    m_mainGridLayout->setMargin(9);
+    m_mainGridLayout->setSpacing(0);
     m_mainFrame->setStyleSheet(QString(R"(
                                        #mainFrame{
                                        background-color: white;
-                                       border: 2px solid rgb(230, 230, 230);
+                                       border: 1px solid gray;
                                        border-radius: 8px;
                                        }
                                        )"));
@@ -37,9 +38,9 @@ FramelessDialog::FramelessDialog(QWidget *parent) : QDialog(parent)
     m_mainFrame->setLayout(vLayout);
 
     QGraphicsDropShadowEffect *shadow = new QGraphicsDropShadowEffect;
-    shadow->setOffset(3);
-    shadow->setColor(QColor(63, 63, 63, 100));
-    shadow->setBlurRadius(2);
+    shadow->setOffset(0, 0.5);
+    shadow->setColor(Qt::black);
+    shadow->setBlurRadius(9);
     m_mainFrame->setGraphicsEffect(shadow);
 
     //Top bar
@@ -171,6 +172,7 @@ void FramelessDialog::mousePressEvent(QMouseEvent *event)
             setCursor(Qt::SizeAllCursor);
             m_mouseDownPoint = event->globalPos();
             m_isMouseDown = true;
+            setWindowOpacity(0.85);
 //        }
     }
 }
@@ -182,6 +184,7 @@ void FramelessDialog::mouseReleaseEvent(QMouseEvent *)
 
     m_isMouseDown = false;
     setCursor(Qt::ArrowCursor);
+    setWindowOpacity(1);
 }
 
 void FramelessDialog::mouseMoveEvent(QMouseEvent *event)
@@ -224,7 +227,7 @@ bool FramelessDialog::event(QEvent *event)
             m_mainFrame->setStyleSheet(QString(R"(
                                                #mainFrame{
                                                background-color: white;
-                                               border: 2px solid rgb(230, 230, 230);
+                                               border: 1px solid gray;
                                                border-radius: %0px;
                                                }
                                                )").arg(isMaximized() ? 0 : 8));
