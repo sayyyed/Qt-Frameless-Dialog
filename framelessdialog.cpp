@@ -47,7 +47,7 @@ FramelessDialog::FramelessDialog(QWidget *parent) : QDialog(parent)
     m_mainFrame->setStyleSheet(QString(R"(
                                        #mainFrame{
                                        background-color: white;
-                                       border: 1px solid gray;
+                                       border: 1px solid lightgray;
                                        border-radius: 8px;
                                        }
                                        )"));
@@ -57,10 +57,10 @@ FramelessDialog::FramelessDialog(QWidget *parent) : QDialog(parent)
     vLayout->setMargin(0);
     m_mainFrame->setLayout(vLayout);
 
-    QGraphicsDropShadowEffect *shadow = new QGraphicsDropShadowEffect;
+    QGraphicsDropShadowEffect *shadow = new QGraphicsDropShadowEffect(this);
     shadow->setOffset(0, 0.5);
     shadow->setColor(Qt::black);
-    shadow->setBlurRadius(9);
+    shadow->setBlurRadius(12);
     m_mainFrame->setGraphicsEffect(shadow);
 
     //Top bar
@@ -150,6 +150,92 @@ FramelessDialog::FramelessDialog(QWidget *parent) : QDialog(parent)
         else
             this->showMaximized();
     });
+
+    this->setStyleSheet(R"(
+                        QScrollBar:horizontal {
+                        height: 12px;
+                        margin: 2px 0px;
+                        border: 1px transparent #2A2929;
+                        border-radius: 2px;
+                        background-color: rgb(220, 220, 220);
+                        }
+
+                        QScrollBar::handle:horizontal
+                        {
+                        background-color: gray;
+                        min-height: 12px;
+                        height: 12px;
+                        border-radius: 3px;
+                        }
+
+                        QScrollBar::up-arrow:horizontal, QScrollBar::down-arrow:horizontal
+                        {
+                        background: none;
+                        }
+
+
+                        QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal
+                        {
+                        background: none;
+                        }
+
+                        QScrollBar::add-line:horizontal
+                        {
+                        width: 0px;
+                        background: none;
+                        border: none;
+                        }
+
+                        QScrollBar::sub-line:horizontal
+                        {
+                        width: 0px;
+                        background: none;
+                        border: none;
+                        }
+
+                        QScrollBar:vertical
+                        {
+                        width: 12px;
+                        margin: 0px 2px;
+                        border: 1px #2A2929;
+                        border-radius: 3px;
+                        background-color: rgb(220, 220, 220);
+                        }
+
+                        QScrollBar::handle:vertical
+                        {
+                        background-color: gray;
+                        min-width: 12px;
+                        width: 12px;
+                        border-radius: 3px;
+                        }
+
+                        QScrollBar::up-arrow:vertical, QScrollBar::down-arrow:vertical
+                        {
+                        background: none;
+                        }
+
+
+                        QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical
+                        {
+                        background: none;
+                        }
+
+                        QScrollBar::add-line:vertical
+                        {
+                        width: 0px;
+                        background: none;
+                        border: none;
+                        }
+
+                        QScrollBar::sub-line:vertical
+                        {
+                        width: 0px;
+                        background: none;
+                        border: none;
+                        }
+
+                        )");
 }
 
 void FramelessDialog::addWidget(QWidget *widget, int row, int column, int rowSpan, int columnSpan, Qt::Alignment alignment)

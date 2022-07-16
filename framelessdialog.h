@@ -27,19 +27,18 @@ private:
     QPoint m_originalPosition;
     QPoint m_mouseDownPoint;
 
-    bool m_isResizable = true;
-    QToolButton *m_maximizeBtn = Q_NULLPTR;
-    QSizeGrip *m_sizeGrip = Q_NULLPTR;
-
     QGridLayout *m_mainGridLayout = Q_NULLPTR;
     QFrame *m_mainFrame = Q_NULLPTR;
     QGridLayout *m_frameGridLayout = Q_NULLPTR;
     QFrame *m_topBarFrame = Q_NULLPTR;
 
     //
-    QFrame *m_leftHorizontalSizeGrip = nullptr;
+    bool m_isResizable = true;
+    QToolButton *m_maximizeBtn = Q_NULLPTR;
+    QSizeGrip *m_sizeGrip = Q_NULLPTR;
+    QFrame *m_leftHorizontalSizeGrip = Q_NULLPTR;
     bool m_isLeftHorizontalSizeGripClicked = false;
-    QFrame *m_rightHorizontalSizeGrip = nullptr;
+    QFrame *m_rightHorizontalSizeGrip = Q_NULLPTR;
     bool m_isRightHorizontalSizeGripClicked = false;
     bool m_isHorizontalResizing = false;
     int m_originalWidth = 0;
